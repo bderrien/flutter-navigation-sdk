@@ -99,9 +99,9 @@ class _NavigationDemoState extends State<NavigationBody> {
         .request();
 
     PermissionStatus notificationPermission = PermissionStatus.denied;
-    if (Platform.isIOS) {
+
       notificationPermission = await Permission.notification.request();
-    }
+
     setState(() {
       _locationPermitted = locationPermission == PermissionStatus.granted;
       _notificationsPermitted =
