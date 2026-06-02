@@ -40,6 +40,7 @@ struct MapConfiguration {
   var padding: UIEdgeInsets?
   var mapId: String?
   var mapColorScheme: UIUserInterfaceStyle
+  var paddingAdjustmentBehavior: GMSMapViewPaddingAdjustmentBehavior = .never
 }
 
 extension MapConfiguration {
@@ -47,6 +48,7 @@ extension MapConfiguration {
   //
   // - Parameter to: The GMSMapView to configure.
   func apply(to mapView: GMSMapView) {
+    mapView.paddingAdjustmentBehavior = paddingAdjustmentBehavior
     mapView.mapType = mapType
     mapView.overrideUserInterfaceStyle = mapColorScheme
     mapView.settings.compassButton = compassEnabled

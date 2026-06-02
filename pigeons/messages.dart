@@ -55,6 +55,7 @@ class MapOptionsDto {
     required this.padding,
     required this.mapId,
     required this.mapColorScheme,
+    required this.paddingAdjustmentBehavior,
   });
 
   /// The initial positioning of the camera in the map view.
@@ -106,6 +107,9 @@ class MapOptionsDto {
 
   /// The map color scheme mode for the map view.
   final MapColorSchemeDto mapColorScheme;
+
+  /// iOS [GMSMapView.paddingAdjustmentBehavior] only.
+  final MapPaddingAdjustmentBehaviorDto paddingAdjustmentBehavior;
 }
 
 /// Determines the initial visibility of the navigation UI on map initialization.
@@ -1368,6 +1372,12 @@ enum TaskRemovedBehaviorDto {
 
   /// Indicates that navigation guidance, location updates, and notification should shut down immediately when the user removes the application task.
   quitService,
+}
+
+/// iOS [GMSMapView.paddingAdjustmentBehavior] only.
+enum MapPaddingAdjustmentBehaviorDto {
+  never,
+  always,
 }
 
 /// Options for step image generation in turn-by-turn navigation events.

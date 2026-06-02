@@ -62,6 +62,7 @@ class GoogleMapsNavigationView extends GoogleMapsBaseMapView {
     super.initialPadding,
     super.mapId,
     super.initialMapColorScheme = MapColorScheme.followSystem,
+    super.initialPaddingAdjustmentBehavior = MapPaddingAdjustmentBehavior.never,
     this.initialNavigationUIEnabledPreference =
         NavigationUIEnabledPreference.automatic,
     this.initialForceNightMode = NavigationForceNightMode.auto,
@@ -176,6 +177,7 @@ class GoogleMapsNavigationViewState
             Directionality.maybeOf(context) ??
             TextDirection.ltr,
         gestureRecognizers: widget.gestureRecognizers,
+        paddingAdjustmentBehavior: widget.initialPaddingAdjustmentBehavior,
         mapOptions: MapOptions(
           cameraPosition: widget.initialCameraPosition,
           mapType: widget.initialMapType,

@@ -136,6 +136,8 @@ class MapViewAPIImpl {
           : null,
       mapId: mapOptions.mapId,
       mapColorScheme: mapOptions.mapColorScheme.toDto(),
+      paddingAdjustmentBehavior:
+          initializationSettings.paddingAdjustmentBehavior.toDto(),
     );
 
     // Initialize navigation view options if given
