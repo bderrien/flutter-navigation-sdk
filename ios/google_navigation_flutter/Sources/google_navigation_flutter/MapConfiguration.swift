@@ -15,6 +15,30 @@
 import Foundation
 import GoogleMaps
 
+extension GMSMapView {
+  /// Applies padding and compensates with `scrollBy` so the map does not appear to jump:
+  /// the SDK draws `camera.target` at the padded content center, which moves when insets change.
+  func applyPaddingPreservingCamera(_ padding: UIEdgeInsets) {
+    let oldPadding = self.padding
+    let b = bounds
+    let oldContent = b.inset(by: oldPadding)
+    let newContent = b.inset(by: padding)
+    let oldCenter = CGPoint(x: oldContent.midX, y: oldContent.midY)
+    let newCenter = CGPoint(x: newContent.midX, y: newContent.midY)
+    // `scrollBy` sign: positive x/y move the camera right/down (map appears left/up).
+    let scrollX = newCenter.x - oldCenter.x
+    let scrollY = newCenter.y - oldCenter.y
+
+    self.padding = padding
+
+    let validOld = oldContent.width > 0 && oldContent.height > 0
+    let validNew = newContent.width > 0 && newContent.height > 0
+    if b.width > 0, b.height > 0, validOld, validNew, scrollX != 0 || scrollY != 0 {
+      moveCamera(GMSCameraUpdate.scrollBy(x: scrollX, y: scrollY))
+    }
+  }
+}
+
 // Determines the initial visibility of the navigation UI on map initialization.
 public enum NavigationUIEnabledPreference {
   // Navigation UI gets enabled if the navigation
@@ -64,7 +88,7 @@ extension MapConfiguration {
       maxZoom: maxZoomPreference ?? kGMSMaxZoomLevel
     )
     if let padding {
-      mapView.padding = padding
+      mapView.applyPaddingPreservingCamera(padding)
     }
   }
 
