@@ -17,7 +17,9 @@
 package com.google.maps.flutter.navigation
 
 import android.app.Application
+import android.content.Intent
 import androidx.lifecycle.Lifecycle
+import com.google.android.libraries.navigation.NavigationApi
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -28,9 +30,41 @@ class GoogleMapsNavigationPlugin : FlutterPlugin, ActivityAware {
   companion object {
     private val instances = mutableListOf<GoogleMapsNavigationPlugin>()
 
+    @Volatile private var foregroundServiceManagerInitialized = false
+
     /** Returns the first instance, which should always be the main Flutter engine. */
     fun getInstance(): GoogleMapsNavigationPlugin? {
       return instances.firstOrNull()
+    }
+
+    /**
+     * Configures the Navigation SDK foreground notification so that tapping it reopens the app.
+     * Must be called before any other [NavigationApi] method.
+     */
+    private fun initForegroundServiceResumeIntent(application: Application) {
+      if (foregroundServiceManagerInitialized) return
+      synchronized(GoogleMapsNavigationPlugin::class.java) {
+        if (foregroundServiceManagerInitialized) return
+        try {
+          val resumeIntent =
+            application.packageManager.getLaunchIntentForPackage(application.packageName)?.apply {
+              addFlags(
+                Intent.FLAG_ACTIVITY_NEW_TASK or
+                  Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                  Intent.FLAG_ACTIVITY_SINGLE_TOP
+              )
+            }
+          NavigationApi.initForegroundServiceManagerMessageAndIntent(
+            application,
+            null,
+            null,
+            resumeIntent,
+          )
+        } catch (_: RuntimeException) {
+          // Already initialized by a previous engine attachment.
+        }
+        foregroundServiceManagerInitialized = true
+      }
     }
   }
 
@@ -67,6 +101,7 @@ class GoogleMapsNavigationPlugin : FlutterPlugin, ActivityAware {
 
     // Setup navigation session manager
     val app = binding.applicationContext as Application
+    initForegroundServiceResumeIntent(app)
     val navigationSessionEventApi = NavigationSessionEventApi(binding.binaryMessenger)
     sessionManager =
       GoogleMapsNavigationSessionManager(navigationSessionEventApi, app, imageRegistry!!)
