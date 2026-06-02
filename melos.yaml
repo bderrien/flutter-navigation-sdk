@@ -211,3 +211,4 @@ scripts:
         --ignore ".github/ISSUE_TEMPLATE/**" \
         .
     description: Add a license header to all necessary files.
+sdkPath: .fvm/flutter_sdk

@@ -69,3 +69,6 @@ generated_plugin_registrant.*
 
 # Patrol generated test files
 test_bundle.dart
+
+# FVM Version Cache
+.fvm/
