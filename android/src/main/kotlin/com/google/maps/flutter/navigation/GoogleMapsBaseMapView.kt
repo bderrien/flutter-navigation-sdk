@@ -1053,12 +1053,13 @@ abstract class GoogleMapsBaseMapView(
 
   fun setPadding(padding: MapPaddingDto) {
     _mapOptions?.padding = padding
+    val density = Resources.getSystem().displayMetrics.density
     getMap()
       .setPadding(
-        padding.left.toInt(),
-        padding.top.toInt(),
-        padding.right.toInt(),
-        padding.bottom.toInt(),
+        Convert.convertLogicalToScreenPixel(padding.left.toDouble(), density).toInt(),
+        Convert.convertLogicalToScreenPixel(padding.top.toDouble(), density).toInt(),
+        Convert.convertLogicalToScreenPixel(padding.right.toDouble(), density).toInt(),
+        Convert.convertLogicalToScreenPixel(padding.bottom.toDouble(), density).toInt(),
       )
   }
 
