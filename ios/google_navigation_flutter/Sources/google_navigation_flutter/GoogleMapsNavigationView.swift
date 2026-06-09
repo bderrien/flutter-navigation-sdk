@@ -47,7 +47,7 @@ public class GoogleMapsNavigationView: NSObject, FlutterPlatformView, ViewSettle
   private var _imageRegistry: ImageRegistry
   private var _consumeMyLocationButtonClickEventsEnabled: Bool = false
   private var _listenCameraChanges = false
-  var isAttachedToSession: Bool = false
+  public private(set) var isAttachedToSession: Bool = false
   private let _isCarPlayView: Bool
 
   // As prompt visibility settings is handled by the navigator, value is
@@ -61,6 +61,22 @@ public class GoogleMapsNavigationView: NSObject, FlutterPlatformView, ViewSettle
   // Callback for CarPlay views to handle prompt visibility changes
   // This allows BaseCarSceneDelegate to intercept and handle the event
   var promptVisibilityCallback: ((Bool) -> Void)?
+
+  // Callbacks for CarPlay views to handle indoor state changes.
+  var indoorFocusedBuildingChangedCallback: ((IndoorBuildingDto?) -> Void)?
+  var indoorActiveLevelChangedCallback: ((IndoorBuildingDto?) -> Void)?
+
+  // Callback for CarPlay views to handle custom events sent from Flutter
+  // This allows BaseCarSceneDelegate to intercept and handle the event
+  var customNavigationAutoEventFromFlutterCallback: ((String, Any) -> Void)?
+
+  // Callback for CarPlay views to handle navigation UI state changes
+  // This allows BaseCarSceneDelegate subclasses to react when UI state changes
+  var navigationUIEnabledChangedCallback: ((Bool) -> Void)?
+
+  // Callback for CarPlay views to handle session attachment state changes
+  // This allows BaseCarSceneDelegate subclasses to react when session attachment changes
+  var sessionAttachmentChangedCallback: ((Bool) -> Void)?
 
   public func view() -> UIView {
     _mapView
@@ -111,6 +127,7 @@ public class GoogleMapsNavigationView: NSObject, FlutterPlatformView, ViewSettle
 
     _mapView.delegate = self
     _mapView.viewSettledDelegate = self
+    _mapView.indoorDisplay.delegate = self
 
     _navigationUIEnabledPreference = navigationUIEnabledPreference
     applyNavigationUIEnabledPreference()
@@ -124,6 +141,7 @@ public class GoogleMapsNavigationView: NSObject, FlutterPlatformView, ViewSettle
   deinit {
     unregisterView()
     _mapView.delegate = nil
+    _mapView.indoorDisplay.delegate = nil
   }
 
   func registerView() {
@@ -399,6 +417,53 @@ public class GoogleMapsNavigationView: NSObject, FlutterPlatformView, ViewSettle
     _mapView.isBuildingsEnabled = enabled
   }
 
+  func isIndoorEnabled() -> Bool {
+    _mapView.isIndoorEnabled
+  }
+
+  func setIndoorEnabled(_ enabled: Bool) {
+    _mapView.isIndoorEnabled = enabled
+  }
+
+  func isIndoorLevelPickerEnabled() -> Bool {
+    _mapView.settings.indoorPicker
+  }
+
+  func setIndoorLevelPickerEnabled(_ enabled: Bool) {
+    _mapView.settings.indoorPicker = enabled
+  }
+
+  func getFocusedIndoorBuilding() -> IndoorBuildingDto? {
+    guard let building = _mapView.indoorDisplay.activeBuilding else {
+      return nil
+    }
+    return Convert.convertIndoorBuilding(
+      building: building,
+      activeLevel: _mapView.indoorDisplay.activeLevel
+    )
+  }
+
+  func activateIndoorLevel(_ levelIndex: Int) throws {
+    guard let building = _mapView.indoorDisplay.activeBuilding else {
+      throw PigeonError(
+        code: "indoorLevelActivationFailed",
+        message: "No indoor building is currently focused",
+        details: nil
+      )
+    }
+
+    if levelIndex < 0 || levelIndex >= building.levels.count {
+      throw PigeonError(
+        code: "indoorLevelActivationFailed",
+        message:
+          "Level index \(levelIndex) is out of range (building has \(building.levels.count) levels)",
+        details: nil
+      )
+    }
+
+    _mapView.indoorDisplay.activeLevel = building.levels[levelIndex]
+  }
+
   func showRouteOverview() {
     _mapView.cameraMode = .overview
   }
@@ -518,7 +583,12 @@ public class GoogleMapsNavigationView: NSObject, FlutterPlatformView, ViewSettle
     session.navigator?.shouldDisplayPrompts = _isTrafficPromptsEnabled
 
     _mapView.navigationUIDelegate = self
+    let wasAttachedToSession = isAttachedToSession
     isAttachedToSession = true
+
+    if !wasAttachedToSession {
+      sessionAttachmentChangedCallback?(true)
+    }
 
     return result
   }
@@ -625,13 +695,16 @@ public class GoogleMapsNavigationView: NSObject, FlutterPlatformView, ViewSettle
     return _isPromptVisible
   }
 
-  func isNavigationUIEnabled() -> Bool {
+  public func isNavigationUIEnabled() -> Bool {
     _mapView.isNavigationEnabled
   }
 
   func setNavigationUIEnabled(_ enabled: Bool) {
     if _mapView.isNavigationEnabled != enabled {
       _mapView.isNavigationEnabled = enabled
+      if _isCarPlayView {
+        navigationUIEnabledChangedCallback?(enabled)
+      }
       if let viewId = _viewId {
         getViewEventApi()?
           .onNavigationUIEnabledChanged(viewId: viewId, navigationUIEnabled: enabled) { _ in }
@@ -1134,6 +1207,53 @@ extension GoogleMapsNavigationView: GMSMapViewDelegate {
       getViewEventApi()?.onPromptVisibilityChanged(
         viewId: _viewId!,
         promptVisible: promptVisible,
+        completion: { _ in }
+      )
+    }
+  }
+
+  func sendCustomNavigationAutoEventFromFlutter(event: String, data: Any) {
+    guard _isCarPlayView else { return }
+    customNavigationAutoEventFromFlutterCallback?(event, data)
+  }
+}
+
+extension GoogleMapsNavigationView: GMSIndoorDisplayDelegate {
+  public func didChangeActiveBuilding(_ building: GMSIndoorBuilding?) {
+    let buildingDto: IndoorBuildingDto? = {
+      guard let building else { return nil }
+      return Convert.convertIndoorBuilding(
+        building: building,
+        activeLevel: _mapView.indoorDisplay.activeLevel
+      )
+    }()
+
+    if _isCarPlayView {
+      indoorFocusedBuildingChangedCallback?(buildingDto)
+    } else {
+      getViewEventApi()?.onIndoorFocusedBuildingChanged(
+        viewId: _viewId!,
+        building: buildingDto,
+        completion: { _ in }
+      )
+    }
+  }
+
+  public func didChangeActiveLevel(_ level: GMSIndoorLevel?) {
+    let buildingDto: IndoorBuildingDto? = {
+      guard let building = _mapView.indoorDisplay.activeBuilding else { return nil }
+      return Convert.convertIndoorBuilding(
+        building: building,
+        activeLevel: level
+      )
+    }()
+
+    if _isCarPlayView {
+      indoorActiveLevelChangedCallback?(buildingDto)
+    } else {
+      getViewEventApi()?.onIndoorActiveLevelChanged(
+        viewId: _viewId!,
+        building: buildingDto,
         completion: { _ in }
       )
     }

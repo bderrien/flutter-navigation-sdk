@@ -31,6 +31,7 @@ import com.google.android.gms.maps.GoogleMap.OnMarkerDragListener
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.Circle
 import com.google.android.gms.maps.model.FollowMyLocationOptions
+import com.google.android.gms.maps.model.IndoorBuilding
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.MapStyleOptions
@@ -60,6 +61,7 @@ abstract class GoogleMapsBaseMapView(
   // Nullable variable to hold the callback function
   private var _mapReadyCallback: ((Result<Unit>) -> Unit)? = null
   private var _pendingCameraEventsListenerSetup = false
+  private var _indoorStateChangeListener: GoogleMap.OnIndoorStateChangeListener? = null
 
   // Default values for UI features.
   private var _consumeMyLocationButtonClickEventsEnabled: Boolean = false
@@ -256,6 +258,24 @@ abstract class GoogleMapsBaseMapView(
       ) {}
     }
 
+    _indoorStateChangeListener =
+      object : GoogleMap.OnIndoorStateChangeListener {
+        override fun onIndoorBuildingFocused() {
+          viewEventApi?.onIndoorFocusedBuildingChanged(
+            getViewId().toLong(),
+            getFocusedIndoorBuilding(),
+          ) {}
+        }
+
+        override fun onIndoorLevelActivated(indoorBuilding: IndoorBuilding) {
+          viewEventApi?.onIndoorActiveLevelChanged(
+            getViewId().toLong(),
+            Convert.convertIndoorBuildingToDto(indoorBuilding),
+          ) {}
+        }
+      }
+    getMap().setOnIndoorStateChangeListener(_indoorStateChangeListener)
+
     getMap()
       .setOnFollowMyLocationCallback(
         object : GoogleMap.OnCameraFollowLocationCallback {
@@ -295,6 +315,7 @@ abstract class GoogleMapsBaseMapView(
       setOnPolylineClickListener(null)
       setOnMyLocationClickListener(null)
       setOnMyLocationButtonClickListener(null)
+      setOnIndoorStateChangeListener(null)
       setOnFollowMyLocationCallback(null)
       setOnCameraMoveStartedListener(null)
       setOnCameraMoveListener(null)
@@ -305,6 +326,7 @@ abstract class GoogleMapsBaseMapView(
     val textureView = findTextureView(getView()) ?: return
     textureView.surfaceTextureListener = null
     _map = null
+    _indoorStateChangeListener = null
 
     currentLifecycleState = LifecycleState.DESTROYED
   }
@@ -443,6 +465,14 @@ abstract class GoogleMapsBaseMapView(
     return _maxZoomLevelPreference ?: getMap().maxZoomLevel
   }
 
+  fun isIndoorLevelPickerEnabled(): Boolean {
+    return getMap().uiSettings.isIndoorLevelPickerEnabled
+  }
+
+  fun setIndoorLevelPickerEnabled(enabled: Boolean) {
+    getMap().uiSettings.isIndoorLevelPickerEnabled = enabled
+  }
+
   fun resetMinMaxZoomPreference() {
     _minZoomLevelPreference = null
     _maxZoomLevelPreference = null
@@ -549,6 +579,34 @@ abstract class GoogleMapsBaseMapView(
 
   fun setBuildingsEnabled(enabled: Boolean) {
     getMap().isBuildingsEnabled = enabled
+  }
+
+  fun isIndoorEnabled(): Boolean {
+    return getMap().isIndoorEnabled
+  }
+
+  fun setIndoorEnabled(enabled: Boolean) {
+    getMap().isIndoorEnabled = enabled
+  }
+
+  fun getFocusedIndoorBuilding(): IndoorBuildingDto? {
+    return getMap().focusedBuilding?.let { Convert.convertIndoorBuildingToDto(it) }
+  }
+
+  fun activateIndoorLevel(levelIndex: Int) {
+    val building =
+      getMap().focusedBuilding
+        ?: throw FlutterError(
+          "indoorLevelActivationFailed",
+          "No indoor building is currently focused",
+        )
+    if (levelIndex < 0 || levelIndex >= building.levels.size) {
+      throw FlutterError(
+        "indoorLevelActivationFailed",
+        "Level index $levelIndex is out of range (building has ${building.levels.size} levels)",
+      )
+    }
+    building.levels[levelIndex].activate()
   }
 
   fun getMyLocation(): Location? {

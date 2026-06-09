@@ -1016,6 +1016,82 @@ struct PointOfInterestDto: Hashable {
   }
 }
 
+/// Represents one indoor level of a focused indoor building.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct IndoorLevelDto: Hashable {
+  /// Full display name of the level.
+  var name: String? = nil
+  /// Short display name of the level.
+  var shortName: String? = nil
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> IndoorLevelDto? {
+    let name: String? = nilOrValue(pigeonVar_list[0])
+    let shortName: String? = nilOrValue(pigeonVar_list[1])
+
+    return IndoorLevelDto(
+      name: name,
+      shortName: shortName
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      name,
+      shortName,
+    ]
+  }
+  static func == (lhs: IndoorLevelDto, rhs: IndoorLevelDto) -> Bool {
+    return deepEqualsmessages(lhs.toList(), rhs.toList())  }
+  func hash(into hasher: inout Hasher) {
+    deepHashmessages(value: toList(), hasher: &hasher)
+  }
+}
+
+/// Represents focused indoor building metadata.
+///
+/// Generated class from Pigeon that represents data sent in messages.
+struct IndoorBuildingDto: Hashable {
+  /// All levels available in the focused building.
+  var levels: [IndoorLevelDto?]
+  /// Currently active level index in [levels], if known.
+  var activeLevelIndex: Int64? = nil
+  /// Default level index in [levels], if known.
+  var defaultLevelIndex: Int64? = nil
+  /// Whether building is mostly underground, if known.
+  var isUnderground: Bool? = nil
+
+
+  // swift-format-ignore: AlwaysUseLowerCamelCase
+  static func fromList(_ pigeonVar_list: [Any?]) -> IndoorBuildingDto? {
+    let levels = pigeonVar_list[0] as! [IndoorLevelDto?]
+    let activeLevelIndex: Int64? = nilOrValue(pigeonVar_list[1])
+    let defaultLevelIndex: Int64? = nilOrValue(pigeonVar_list[2])
+    let isUnderground: Bool? = nilOrValue(pigeonVar_list[3])
+
+    return IndoorBuildingDto(
+      levels: levels,
+      activeLevelIndex: activeLevelIndex,
+      defaultLevelIndex: defaultLevelIndex,
+      isUnderground: isUnderground
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      levels,
+      activeLevelIndex,
+      defaultLevelIndex,
+      isUnderground,
+    ]
+  }
+  static func == (lhs: IndoorBuildingDto, rhs: IndoorBuildingDto) -> Bool {
+    return deepEqualsmessages(lhs.toList(), rhs.toList())  }
+  func hash(into hasher: inout Hasher) {
+    deepHashmessages(value: toList(), hasher: &hasher)
+  }
+}
+
 /// Generated class from Pigeon that represents data sent in messages.
 struct PolygonDto: Hashable {
   var polygonId: String
@@ -2533,74 +2609,78 @@ private class MessagesPigeonCodecReader: FlutterStandardReader {
     case 166:
       return PointOfInterestDto.fromList(self.readValue() as! [Any?])
     case 167:
-      return PolygonDto.fromList(self.readValue() as! [Any?])
+      return IndoorLevelDto.fromList(self.readValue() as! [Any?])
     case 168:
-      return PolygonOptionsDto.fromList(self.readValue() as! [Any?])
+      return IndoorBuildingDto.fromList(self.readValue() as! [Any?])
     case 169:
-      return PolygonHoleDto.fromList(self.readValue() as! [Any?])
+      return PolygonDto.fromList(self.readValue() as! [Any?])
     case 170:
-      return StyleSpanStrokeStyleDto.fromList(self.readValue() as! [Any?])
+      return PolygonOptionsDto.fromList(self.readValue() as! [Any?])
     case 171:
-      return StyleSpanDto.fromList(self.readValue() as! [Any?])
+      return PolygonHoleDto.fromList(self.readValue() as! [Any?])
     case 172:
-      return PolylineDto.fromList(self.readValue() as! [Any?])
+      return StyleSpanStrokeStyleDto.fromList(self.readValue() as! [Any?])
     case 173:
-      return PatternItemDto.fromList(self.readValue() as! [Any?])
+      return StyleSpanDto.fromList(self.readValue() as! [Any?])
     case 174:
-      return PolylineOptionsDto.fromList(self.readValue() as! [Any?])
+      return PolylineDto.fromList(self.readValue() as! [Any?])
     case 175:
-      return CircleDto.fromList(self.readValue() as! [Any?])
+      return PatternItemDto.fromList(self.readValue() as! [Any?])
     case 176:
-      return CircleOptionsDto.fromList(self.readValue() as! [Any?])
+      return PolylineOptionsDto.fromList(self.readValue() as! [Any?])
     case 177:
-      return MapPaddingDto.fromList(self.readValue() as! [Any?])
+      return CircleDto.fromList(self.readValue() as! [Any?])
     case 178:
-      return RouteTokenOptionsDto.fromList(self.readValue() as! [Any?])
+      return CircleOptionsDto.fromList(self.readValue() as! [Any?])
     case 179:
-      return DestinationsDto.fromList(self.readValue() as! [Any?])
+      return MapPaddingDto.fromList(self.readValue() as! [Any?])
     case 180:
-      return RoutingOptionsDto.fromList(self.readValue() as! [Any?])
+      return RouteTokenOptionsDto.fromList(self.readValue() as! [Any?])
     case 181:
-      return NavigationDisplayOptionsDto.fromList(self.readValue() as! [Any?])
+      return DestinationsDto.fromList(self.readValue() as! [Any?])
     case 182:
-      return NavigationWaypointDto.fromList(self.readValue() as! [Any?])
+      return RoutingOptionsDto.fromList(self.readValue() as! [Any?])
     case 183:
-      return ContinueToNextDestinationResponseDto.fromList(self.readValue() as! [Any?])
+      return NavigationDisplayOptionsDto.fromList(self.readValue() as! [Any?])
     case 184:
-      return NavigationTimeAndDistanceDto.fromList(self.readValue() as! [Any?])
+      return NavigationWaypointDto.fromList(self.readValue() as! [Any?])
     case 185:
-      return NavigationAudioGuidanceSettingsDto.fromList(self.readValue() as! [Any?])
+      return ContinueToNextDestinationResponseDto.fromList(self.readValue() as! [Any?])
     case 186:
-      return SimulationOptionsDto.fromList(self.readValue() as! [Any?])
+      return NavigationTimeAndDistanceDto.fromList(self.readValue() as! [Any?])
     case 187:
-      return LatLngDto.fromList(self.readValue() as! [Any?])
+      return NavigationAudioGuidanceSettingsDto.fromList(self.readValue() as! [Any?])
     case 188:
-      return LatLngBoundsDto.fromList(self.readValue() as! [Any?])
+      return SimulationOptionsDto.fromList(self.readValue() as! [Any?])
     case 189:
-      return SpeedingUpdatedEventDto.fromList(self.readValue() as! [Any?])
+      return LatLngDto.fromList(self.readValue() as! [Any?])
     case 190:
-      return GpsAvailabilityChangeEventDto.fromList(self.readValue() as! [Any?])
+      return LatLngBoundsDto.fromList(self.readValue() as! [Any?])
     case 191:
-      return SpeedAlertOptionsThresholdPercentageDto.fromList(self.readValue() as! [Any?])
+      return SpeedingUpdatedEventDto.fromList(self.readValue() as! [Any?])
     case 192:
-      return SpeedAlertOptionsDto.fromList(self.readValue() as! [Any?])
+      return GpsAvailabilityChangeEventDto.fromList(self.readValue() as! [Any?])
     case 193:
-      return RouteSegmentTrafficDataRoadStretchRenderingDataDto.fromList(self.readValue() as! [Any?])
+      return SpeedAlertOptionsThresholdPercentageDto.fromList(self.readValue() as! [Any?])
     case 194:
-      return RouteSegmentTrafficDataDto.fromList(self.readValue() as! [Any?])
+      return SpeedAlertOptionsDto.fromList(self.readValue() as! [Any?])
     case 195:
-      return RouteSegmentDto.fromList(self.readValue() as! [Any?])
+      return RouteSegmentTrafficDataRoadStretchRenderingDataDto.fromList(self.readValue() as! [Any?])
     case 196:
-      return LaneDirectionDto.fromList(self.readValue() as! [Any?])
+      return RouteSegmentTrafficDataDto.fromList(self.readValue() as! [Any?])
     case 197:
-      return LaneDto.fromList(self.readValue() as! [Any?])
+      return RouteSegmentDto.fromList(self.readValue() as! [Any?])
     case 198:
-      return StepInfoDto.fromList(self.readValue() as! [Any?])
+      return LaneDirectionDto.fromList(self.readValue() as! [Any?])
     case 199:
-      return NavInfoDto.fromList(self.readValue() as! [Any?])
+      return LaneDto.fromList(self.readValue() as! [Any?])
     case 200:
-      return TermsAndConditionsUIParamsDto.fromList(self.readValue() as! [Any?])
+      return StepInfoDto.fromList(self.readValue() as! [Any?])
     case 201:
+      return NavInfoDto.fromList(self.readValue() as! [Any?])
+    case 202:
+      return TermsAndConditionsUIParamsDto.fromList(self.readValue() as! [Any?])
+    case 203:
       return StepImageGenerationOptionsDto.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
@@ -2724,110 +2804,116 @@ private class MessagesPigeonCodecWriter: FlutterStandardWriter {
     } else if let value = value as? PointOfInterestDto {
       super.writeByte(166)
       super.writeValue(value.toList())
-    } else if let value = value as? PolygonDto {
+    } else if let value = value as? IndoorLevelDto {
       super.writeByte(167)
       super.writeValue(value.toList())
-    } else if let value = value as? PolygonOptionsDto {
+    } else if let value = value as? IndoorBuildingDto {
       super.writeByte(168)
       super.writeValue(value.toList())
-    } else if let value = value as? PolygonHoleDto {
+    } else if let value = value as? PolygonDto {
       super.writeByte(169)
       super.writeValue(value.toList())
-    } else if let value = value as? StyleSpanStrokeStyleDto {
+    } else if let value = value as? PolygonOptionsDto {
       super.writeByte(170)
       super.writeValue(value.toList())
-    } else if let value = value as? StyleSpanDto {
+    } else if let value = value as? PolygonHoleDto {
       super.writeByte(171)
       super.writeValue(value.toList())
-    } else if let value = value as? PolylineDto {
+    } else if let value = value as? StyleSpanStrokeStyleDto {
       super.writeByte(172)
       super.writeValue(value.toList())
-    } else if let value = value as? PatternItemDto {
+    } else if let value = value as? StyleSpanDto {
       super.writeByte(173)
       super.writeValue(value.toList())
-    } else if let value = value as? PolylineOptionsDto {
+    } else if let value = value as? PolylineDto {
       super.writeByte(174)
       super.writeValue(value.toList())
-    } else if let value = value as? CircleDto {
+    } else if let value = value as? PatternItemDto {
       super.writeByte(175)
       super.writeValue(value.toList())
-    } else if let value = value as? CircleOptionsDto {
+    } else if let value = value as? PolylineOptionsDto {
       super.writeByte(176)
       super.writeValue(value.toList())
-    } else if let value = value as? MapPaddingDto {
+    } else if let value = value as? CircleDto {
       super.writeByte(177)
       super.writeValue(value.toList())
-    } else if let value = value as? RouteTokenOptionsDto {
+    } else if let value = value as? CircleOptionsDto {
       super.writeByte(178)
       super.writeValue(value.toList())
-    } else if let value = value as? DestinationsDto {
+    } else if let value = value as? MapPaddingDto {
       super.writeByte(179)
       super.writeValue(value.toList())
-    } else if let value = value as? RoutingOptionsDto {
+    } else if let value = value as? RouteTokenOptionsDto {
       super.writeByte(180)
       super.writeValue(value.toList())
-    } else if let value = value as? NavigationDisplayOptionsDto {
+    } else if let value = value as? DestinationsDto {
       super.writeByte(181)
       super.writeValue(value.toList())
-    } else if let value = value as? NavigationWaypointDto {
+    } else if let value = value as? RoutingOptionsDto {
       super.writeByte(182)
       super.writeValue(value.toList())
-    } else if let value = value as? ContinueToNextDestinationResponseDto {
+    } else if let value = value as? NavigationDisplayOptionsDto {
       super.writeByte(183)
       super.writeValue(value.toList())
-    } else if let value = value as? NavigationTimeAndDistanceDto {
+    } else if let value = value as? NavigationWaypointDto {
       super.writeByte(184)
       super.writeValue(value.toList())
-    } else if let value = value as? NavigationAudioGuidanceSettingsDto {
+    } else if let value = value as? ContinueToNextDestinationResponseDto {
       super.writeByte(185)
       super.writeValue(value.toList())
-    } else if let value = value as? SimulationOptionsDto {
+    } else if let value = value as? NavigationTimeAndDistanceDto {
       super.writeByte(186)
       super.writeValue(value.toList())
-    } else if let value = value as? LatLngDto {
+    } else if let value = value as? NavigationAudioGuidanceSettingsDto {
       super.writeByte(187)
       super.writeValue(value.toList())
-    } else if let value = value as? LatLngBoundsDto {
+    } else if let value = value as? SimulationOptionsDto {
       super.writeByte(188)
       super.writeValue(value.toList())
-    } else if let value = value as? SpeedingUpdatedEventDto {
+    } else if let value = value as? LatLngDto {
       super.writeByte(189)
       super.writeValue(value.toList())
-    } else if let value = value as? GpsAvailabilityChangeEventDto {
+    } else if let value = value as? LatLngBoundsDto {
       super.writeByte(190)
       super.writeValue(value.toList())
-    } else if let value = value as? SpeedAlertOptionsThresholdPercentageDto {
+    } else if let value = value as? SpeedingUpdatedEventDto {
       super.writeByte(191)
       super.writeValue(value.toList())
-    } else if let value = value as? SpeedAlertOptionsDto {
+    } else if let value = value as? GpsAvailabilityChangeEventDto {
       super.writeByte(192)
       super.writeValue(value.toList())
-    } else if let value = value as? RouteSegmentTrafficDataRoadStretchRenderingDataDto {
+    } else if let value = value as? SpeedAlertOptionsThresholdPercentageDto {
       super.writeByte(193)
       super.writeValue(value.toList())
-    } else if let value = value as? RouteSegmentTrafficDataDto {
+    } else if let value = value as? SpeedAlertOptionsDto {
       super.writeByte(194)
       super.writeValue(value.toList())
-    } else if let value = value as? RouteSegmentDto {
+    } else if let value = value as? RouteSegmentTrafficDataRoadStretchRenderingDataDto {
       super.writeByte(195)
       super.writeValue(value.toList())
-    } else if let value = value as? LaneDirectionDto {
+    } else if let value = value as? RouteSegmentTrafficDataDto {
       super.writeByte(196)
       super.writeValue(value.toList())
-    } else if let value = value as? LaneDto {
+    } else if let value = value as? RouteSegmentDto {
       super.writeByte(197)
       super.writeValue(value.toList())
-    } else if let value = value as? StepInfoDto {
+    } else if let value = value as? LaneDirectionDto {
       super.writeByte(198)
       super.writeValue(value.toList())
-    } else if let value = value as? NavInfoDto {
+    } else if let value = value as? LaneDto {
       super.writeByte(199)
       super.writeValue(value.toList())
-    } else if let value = value as? TermsAndConditionsUIParamsDto {
+    } else if let value = value as? StepInfoDto {
       super.writeByte(200)
       super.writeValue(value.toList())
-    } else if let value = value as? StepImageGenerationOptionsDto {
+    } else if let value = value as? NavInfoDto {
       super.writeByte(201)
+      super.writeValue(value.toList())
+    } else if let value = value as? TermsAndConditionsUIParamsDto {
+      super.writeByte(202)
+      super.writeValue(value.toList())
+    } else if let value = value as? StepImageGenerationOptionsDto {
+      super.writeByte(203)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -2940,6 +3026,15 @@ protocol MapViewApi {
   func showReportIncidentsPanel(viewId: Int64) throws
   func isBuildingsEnabled(viewId: Int64) throws -> Bool
   func setBuildingsEnabled(viewId: Int64, enabled: Bool) throws
+  func isIndoorEnabled(viewId: Int64) throws -> Bool
+  func setIndoorEnabled(viewId: Int64, enabled: Bool) throws
+  func isIndoorLevelPickerEnabled(viewId: Int64) throws -> Bool
+  func setIndoorLevelPickerEnabled(viewId: Int64, enabled: Bool) throws
+  func getFocusedIndoorBuilding(viewId: Int64) throws -> IndoorBuildingDto?
+  /// Activates the indoor level at [levelIndex] within the currently focused
+  /// indoor building. Throws if no building is focused or the index is out of
+  /// range.
+  func activateIndoorLevel(viewId: Int64, levelIndex: Int64) throws
   func getCameraPosition(viewId: Int64) throws -> CameraPositionDto
   func getVisibleRegion(viewId: Int64) throws -> LatLngBoundsDto
   func followMyLocation(viewId: Int64, perspective: CameraPerspectiveDto, zoomLevel: Double?) throws
@@ -3820,6 +3915,102 @@ class MapViewApiSetup {
       }
     } else {
       setBuildingsEnabledChannel.setMessageHandler(nil)
+    }
+    let isIndoorEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.MapViewApi.isIndoorEnabled\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isIndoorEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let viewIdArg = args[0] as! Int64
+        do {
+          let result = try api.isIndoorEnabled(viewId: viewIdArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      isIndoorEnabledChannel.setMessageHandler(nil)
+    }
+    let setIndoorEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.MapViewApi.setIndoorEnabled\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setIndoorEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let viewIdArg = args[0] as! Int64
+        let enabledArg = args[1] as! Bool
+        do {
+          try api.setIndoorEnabled(viewId: viewIdArg, enabled: enabledArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setIndoorEnabledChannel.setMessageHandler(nil)
+    }
+    let isIndoorLevelPickerEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.MapViewApi.isIndoorLevelPickerEnabled\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isIndoorLevelPickerEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let viewIdArg = args[0] as! Int64
+        do {
+          let result = try api.isIndoorLevelPickerEnabled(viewId: viewIdArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      isIndoorLevelPickerEnabledChannel.setMessageHandler(nil)
+    }
+    let setIndoorLevelPickerEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.MapViewApi.setIndoorLevelPickerEnabled\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setIndoorLevelPickerEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let viewIdArg = args[0] as! Int64
+        let enabledArg = args[1] as! Bool
+        do {
+          try api.setIndoorLevelPickerEnabled(viewId: viewIdArg, enabled: enabledArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setIndoorLevelPickerEnabledChannel.setMessageHandler(nil)
+    }
+    let getFocusedIndoorBuildingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.MapViewApi.getFocusedIndoorBuilding\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getFocusedIndoorBuildingChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let viewIdArg = args[0] as! Int64
+        do {
+          let result = try api.getFocusedIndoorBuilding(viewId: viewIdArg)
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getFocusedIndoorBuildingChannel.setMessageHandler(nil)
+    }
+    /// Activates the indoor level at [levelIndex] within the currently focused
+    /// indoor building. Throws if no building is focused or the index is out of
+    /// range.
+    let activateIndoorLevelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.MapViewApi.activateIndoorLevel\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      activateIndoorLevelChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let viewIdArg = args[0] as! Int64
+        let levelIndexArg = args[1] as! Int64
+        do {
+          try api.activateIndoorLevel(viewId: viewIdArg, levelIndex: levelIndexArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      activateIndoorLevelChannel.setMessageHandler(nil)
     }
     let getCameraPositionChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.MapViewApi.getCameraPosition\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
@@ -4761,6 +4952,8 @@ protocol ViewEventApiProtocol {
   func onPromptVisibilityChanged(viewId viewIdArg: Int64, promptVisible promptVisibleArg: Bool, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func onMyLocationClicked(viewId viewIdArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func onMyLocationButtonClicked(viewId viewIdArg: Int64, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onIndoorFocusedBuildingChanged(viewId viewIdArg: Int64, building buildingArg: IndoorBuildingDto?, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onIndoorActiveLevelChanged(viewId viewIdArg: Int64, building buildingArg: IndoorBuildingDto?, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func onCameraChanged(viewId viewIdArg: Int64, eventType eventTypeArg: CameraEventTypeDto, position positionArg: CameraPositionDto, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class ViewEventApi: ViewEventApiProtocol {
@@ -4993,6 +5186,42 @@ class ViewEventApi: ViewEventApiProtocol {
     let channelName: String = "dev.flutter.pigeon.google_navigation_flutter.ViewEventApi.onMyLocationButtonClicked\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([viewIdArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
+      }
+    }
+  }
+  func onIndoorFocusedBuildingChanged(viewId viewIdArg: Int64, building buildingArg: IndoorBuildingDto?, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.google_navigation_flutter.ViewEventApi.onIndoorFocusedBuildingChanged\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([viewIdArg, buildingArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
+      }
+    }
+  }
+  func onIndoorActiveLevelChanged(viewId viewIdArg: Int64, building buildingArg: IndoorBuildingDto?, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.google_navigation_flutter.ViewEventApi.onIndoorActiveLevelChanged\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([viewIdArg, buildingArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return
@@ -5891,6 +6120,10 @@ protocol AutoMapViewApi {
   func isSpeedLimitIconEnabled() throws -> Bool
   func isSpeedometerEnabled() throws -> Bool
   func isNavigationUIEnabled() throws -> Bool
+  func isIndoorEnabled() throws -> Bool
+  func setIndoorEnabled(enabled: Bool) throws
+  func getFocusedIndoorBuilding() throws -> IndoorBuildingDto?
+  func activateIndoorLevel(levelIndex: Int64) throws
   func showRouteOverview() throws
   func getMarkers() throws -> [MarkerDto]
   func addMarkers(markers: [MarkerDto]) throws -> [MarkerDto]
@@ -6860,6 +7093,62 @@ class AutoMapViewApiSetup {
     } else {
       isNavigationUIEnabledChannel.setMessageHandler(nil)
     }
+    let isIndoorEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.AutoMapViewApi.isIndoorEnabled\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      isIndoorEnabledChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.isIndoorEnabled()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      isIndoorEnabledChannel.setMessageHandler(nil)
+    }
+    let setIndoorEnabledChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.AutoMapViewApi.setIndoorEnabled\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      setIndoorEnabledChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let enabledArg = args[0] as! Bool
+        do {
+          try api.setIndoorEnabled(enabled: enabledArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      setIndoorEnabledChannel.setMessageHandler(nil)
+    }
+    let getFocusedIndoorBuildingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.AutoMapViewApi.getFocusedIndoorBuilding\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getFocusedIndoorBuildingChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.getFocusedIndoorBuilding()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getFocusedIndoorBuildingChannel.setMessageHandler(nil)
+    }
+    let activateIndoorLevelChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.AutoMapViewApi.activateIndoorLevel\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      activateIndoorLevelChannel.setMessageHandler { message, reply in
+        let args = message as! [Any?]
+        let levelIndexArg = args[0] as! Int64
+        do {
+          try api.activateIndoorLevel(levelIndex: levelIndexArg)
+          reply(wrapResult(nil))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      activateIndoorLevelChannel.setMessageHandler(nil)
+    }
     let showRouteOverviewChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.google_navigation_flutter.AutoMapViewApi.showRouteOverview\(channelSuffix)", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       showRouteOverviewChannel.setMessageHandler { _, reply in
@@ -7303,6 +7592,8 @@ protocol AutoViewEventApiProtocol {
   func onCustomNavigationAutoEvent(event eventArg: String, data dataArg: Any, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func onAutoScreenAvailabilityChanged(isAvailable isAvailableArg: Bool, completion: @escaping (Result<Void, PigeonError>) -> Void)
   func onPromptVisibilityChanged(promptVisible promptVisibleArg: Bool, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onIndoorFocusedBuildingChanged(building buildingArg: IndoorBuildingDto?, completion: @escaping (Result<Void, PigeonError>) -> Void)
+  func onIndoorActiveLevelChanged(building buildingArg: IndoorBuildingDto?, completion: @escaping (Result<Void, PigeonError>) -> Void)
 }
 class AutoViewEventApi: AutoViewEventApiProtocol {
   private let binaryMessenger: FlutterBinaryMessenger
@@ -7354,6 +7645,42 @@ class AutoViewEventApi: AutoViewEventApiProtocol {
     let channelName: String = "dev.flutter.pigeon.google_navigation_flutter.AutoViewEventApi.onPromptVisibilityChanged\(messageChannelSuffix)"
     let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
     channel.sendMessage([promptVisibleArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
+      }
+    }
+  }
+  func onIndoorFocusedBuildingChanged(building buildingArg: IndoorBuildingDto?, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.google_navigation_flutter.AutoViewEventApi.onIndoorFocusedBuildingChanged\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([buildingArg] as [Any?]) { response in
+      guard let listResponse = response as? [Any?] else {
+        completion(.failure(createConnectionError(withChannelName: channelName)))
+        return
+      }
+      if listResponse.count > 1 {
+        let code: String = listResponse[0] as! String
+        let message: String? = nilOrValue(listResponse[1])
+        let details: String? = nilOrValue(listResponse[2])
+        completion(.failure(PigeonError(code: code, message: message, details: details)))
+      } else {
+        completion(.success(()))
+      }
+    }
+  }
+  func onIndoorActiveLevelChanged(building buildingArg: IndoorBuildingDto?, completion: @escaping (Result<Void, PigeonError>) -> Void) {
+    let channelName: String = "dev.flutter.pigeon.google_navigation_flutter.AutoViewEventApi.onIndoorActiveLevelChanged\(messageChannelSuffix)"
+    let channel = FlutterBasicMessageChannel(name: channelName, binaryMessenger: binaryMessenger, codec: codec)
+    channel.sendMessage([buildingArg] as [Any?]) { response in
       guard let listResponse = response as? [Any?] else {
         completion(.failure(createConnectionError(withChannelName: channelName)))
         return

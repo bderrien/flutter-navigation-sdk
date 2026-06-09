@@ -82,6 +82,14 @@ open class BaseCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate
     return template
   }
 
+  /// Rebuilds and applies the current CarPlay map template.
+  public func refreshTemplate(animated: Bool = true) {
+    mapTemplate = getTemplate()
+    mapTemplate?.mapDelegate = self
+    guard let mapTemplate else { return }
+    interfaceController?.setRootTemplate(mapTemplate, animated: animated) { _, _ in }
+  }
+
   open func templateApplicationScene(
     _ templateApplicationScene: CPTemplateApplicationScene,
     didDisconnect interfaceController: CPInterfaceController,
@@ -148,11 +156,37 @@ open class BaseCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate
           self?.onPromptVisibilityChanged(promptVisible: promptVisible)
         }
 
+        self.navView?.indoorFocusedBuildingChangedCallback = { [weak self] building in
+          self?.sendIndoorFocusedBuildingChangedEvent(building: building)
+        }
+
+        self.navView?.indoorActiveLevelChangedCallback = { [weak self] building in
+          self?.sendIndoorActiveLevelChangedEvent(building: building)
+        }
+
+        // Set up custom event callback from Flutter to allow override
+        self.navView?.customNavigationAutoEventFromFlutterCallback = { [weak self] event, data in
+          self?.onCustomNavigationAutoEventFromFlutter(event: event, data: data)
+        }
+
+        // Set up navigation UI enabled callback to allow override
+        self.navView?.navigationUIEnabledChangedCallback = { [weak self] isEnabled in
+          self?.onNavigationUIEnabledChanged(isEnabled: isEnabled)
+        }
+
+        // Set up session attachment callback to allow override
+        self.navView?.sessionAttachmentChangedCallback = { [weak self] isAttachedToSession in
+          self?.onSessionAttachmentChanged(isAttachedToSession: isAttachedToSession)
+        }
+
         self.navView?.setNavigationHeaderEnabled(false)
         self.navView?.setRecenterButtonEnabled(false)
         self.navView?.setNavigationFooterEnabled(false)
         self.navView?.setSpeedometerEnabled(false)
         self.navView?.setReportIncidentButtonEnabled(false)
+        // Indoor level picker is not user-operable on CarPlay,
+        // so keep it disabled by default for car surfaces.
+        self.navView?.setIndoorLevelPickerEnabled(false)
         self.navViewController = UIViewController()
         self.navViewController?.view = self.navView?.view()
         self.carWindow?.rootViewController = self.navViewController
@@ -265,6 +299,20 @@ open class BaseCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate
     // Subclasses can override to handle custom events
   }
 
+  // Called when CarPlay navigation UI enabled state changes.
+  // Override this method in your CarSceneDelegate subclass to handle the state change.
+  open func onNavigationUIEnabledChanged(isEnabled: Bool) {
+    // Default implementation does nothing
+    // Subclasses can override to handle state changes
+  }
+
+  // Called when CarPlay navigation view attaches to or detaches from a navigation session.
+  // Override this method in your CarSceneDelegate subclass to handle the state change.
+  open func onSessionAttachmentChanged(isAttachedToSession: Bool) {
+    // Default implementation does nothing
+    // Subclasses can override to handle state changes
+  }
+
   func sendAutoScreenAvailabilityChangedEvent(isAvailable: Bool) {
     autoViewEventApi?.onAutoScreenAvailabilityChanged(isAvailable: isAvailable) { _ in }
   }
@@ -279,5 +327,14 @@ open class BaseCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate
   @available(iOS 17.4, *)
   @objc open func mapTemplateShouldProvideNavigationMetadata(_ mapTemplate: CPMapTemplate) -> Bool {
     return false
+  }
+
+  func sendIndoorFocusedBuildingChangedEvent(building: IndoorBuildingDto?) {
+    autoViewEventApi?.onIndoorFocusedBuildingChanged(building: building) { _ in
+    }
+  }
+
+  func sendIndoorActiveLevelChangedEvent(building: IndoorBuildingDto?) {
+    autoViewEventApi?.onIndoorActiveLevelChanged(building: building) { _ in }
   }
 }
