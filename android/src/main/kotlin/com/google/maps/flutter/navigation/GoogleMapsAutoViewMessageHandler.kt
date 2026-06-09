@@ -489,6 +489,12 @@ class GoogleMapsAutoViewMessageHandler(private val viewRegistry: GoogleMapsViewR
   }
 
   override fun sendCustomNavigationAutoEvent(event: String, data: Any) {
-    AndroidAutoBaseScreen.dispatchEventFromFlutter(event, data)
+    // This method receives custom events from Flutter.
+    // The implementation is left empty by design, as developers should handle
+    // custom events in their AndroidAutoBaseScreen subclass by overriding
+    // onCustomNavigationAutoEventFromFlutter method.
+    //
+    // Note: If you need to handle events here, you would need to maintain a reference
+    // to your AndroidAutoBaseScreen instance and call a method on it.
   }
 }

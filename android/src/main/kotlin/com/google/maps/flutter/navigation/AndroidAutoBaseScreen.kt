@@ -47,26 +47,6 @@ open class AndroidAutoBaseScreen(carContext: CarContext) :
      * created to customize map appearance.
      */
     var mapOptions: AutoMapViewOptions? = null
-
-
-    /**
-     * Event handler for sending custom events from Flutter to native.
-     */
-    private var flutterEventForwarder: ((String, Any) -> Unit)? = null
-
-    fun registerFlutterEventHandler(forwarder: ((String, Any) -> Unit)?) {
-      flutterEventForwarder = forwarder
-    }
-
-    private fun clearFlutterEventForwarder(forwarder: (String, Any) -> Unit) {
-      if (flutterEventForwarder === forwarder) {
-        flutterEventForwarder = null
-      }
-    }
-
-    fun dispatchEventFromFlutter(event: String, data: Any) {
-      flutterEventForwarder?.invoke(event, data)
-    }
   }
 
   /**
@@ -110,15 +90,9 @@ open class AndroidAutoBaseScreen(carContext: CarContext) :
   private var mIsPromptVisible: Boolean = false
   private var mIsSurfaceDestroyed: Boolean = false
 
-  private val flutterEventForwarderForThisScreen: (String, Any) -> Unit = { event, data ->
-    onCustomNavigationAutoEventFromFlutter(event, data)
-  }
-
   init {
     initializeSurfaceCallback()
     initializeNavigationListener()
-
-    registerFlutterEventHandler(flutterEventForwarderForThisScreen)
   }
 
   private fun initializeNavigationListener() {
@@ -136,7 +110,6 @@ open class AndroidAutoBaseScreen(carContext: CarContext) :
     object : DefaultLifecycleObserver {
       override fun onDestroy(owner: LifecycleOwner) {
         GoogleMapsNavigationSessionManager.navigationReadyListener = null
-        clearFlutterEventForwarder(flutterEventForwarderForThisScreen)
         mIsNavigationReady = false
       }
     }
