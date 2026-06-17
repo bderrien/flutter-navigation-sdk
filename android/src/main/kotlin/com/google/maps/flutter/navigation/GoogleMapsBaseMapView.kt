@@ -157,8 +157,6 @@ abstract class GoogleMapsBaseMapView(
   }
 
   protected fun mapReady() {
-    getMap().uiSettings.isIndoorLevelPickerEnabled = false;
-
     // Install custom invalidator for the map view.
     installInvalidator()
 

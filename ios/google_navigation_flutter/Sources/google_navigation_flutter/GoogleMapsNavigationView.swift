@@ -120,8 +120,6 @@ public class GoogleMapsNavigationView: NSObject, FlutterPlatformView, ViewSettle
     _mapView = ViewStateAwareGMSMapView(options: mapViewOptions)
     _mapConfiguration.apply(to: _mapView)
 
-    _mapView.settings.indoorPicker = false
-
     super.init()
     registerView()
 
