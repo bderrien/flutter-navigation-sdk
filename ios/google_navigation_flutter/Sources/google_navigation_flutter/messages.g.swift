@@ -599,6 +599,8 @@ struct MapOptionsDto: Hashable {
   var mapColorScheme: MapColorSchemeDto
   /// iOS [GMSMapView.paddingAdjustmentBehavior] only.
   var paddingAdjustmentBehavior: MapPaddingAdjustmentBehaviorDto
+  /// iOS only. When true, padding changes preserve the current camera position.
+  var preserveCameraOnPaddingChange: Bool
 
 
   // swift-format-ignore: AlwaysUseLowerCamelCase
@@ -620,6 +622,7 @@ struct MapOptionsDto: Hashable {
     let mapId: String? = nilOrValue(pigeonVar_list[14])
     let mapColorScheme = pigeonVar_list[15] as! MapColorSchemeDto
     let paddingAdjustmentBehavior = pigeonVar_list[16] as! MapPaddingAdjustmentBehaviorDto
+    let preserveCameraOnPaddingChange = pigeonVar_list[17] as! Bool
 
     return MapOptionsDto(
       cameraPosition: cameraPosition,
@@ -638,7 +641,8 @@ struct MapOptionsDto: Hashable {
       padding: padding,
       mapId: mapId,
       mapColorScheme: mapColorScheme,
-      paddingAdjustmentBehavior: paddingAdjustmentBehavior
+      paddingAdjustmentBehavior: paddingAdjustmentBehavior,
+      preserveCameraOnPaddingChange: preserveCameraOnPaddingChange
     )
   }
   func toList() -> [Any?] {
@@ -660,6 +664,7 @@ struct MapOptionsDto: Hashable {
       mapId,
       mapColorScheme,
       paddingAdjustmentBehavior,
+      preserveCameraOnPaddingChange,
     ]
   }
   static func == (lhs: MapOptionsDto, rhs: MapOptionsDto) -> Bool {

@@ -719,7 +719,9 @@ data class MapOptionsDto (
   /** The map color scheme mode for the map view. */
   val mapColorScheme: MapColorSchemeDto,
   /** iOS [GMSMapView.paddingAdjustmentBehavior] only. */
-  val paddingAdjustmentBehavior: MapPaddingAdjustmentBehaviorDto
+  val paddingAdjustmentBehavior: MapPaddingAdjustmentBehaviorDto,
+  /** iOS only. When true, padding changes preserve the current camera position. */
+  val preserveCameraOnPaddingChange: Boolean
 )
  {
   companion object {
@@ -741,7 +743,8 @@ data class MapOptionsDto (
       val mapId = pigeonVar_list[14] as String?
       val mapColorScheme = pigeonVar_list[15] as MapColorSchemeDto
       val paddingAdjustmentBehavior = pigeonVar_list[16] as MapPaddingAdjustmentBehaviorDto
-      return MapOptionsDto(cameraPosition, mapType, compassEnabled, rotateGesturesEnabled, scrollGesturesEnabled, tiltGesturesEnabled, zoomGesturesEnabled, scrollGesturesEnabledDuringRotateOrZoom, mapToolbarEnabled, minZoomPreference, maxZoomPreference, zoomControlsEnabled, cameraTargetBounds, padding, mapId, mapColorScheme, paddingAdjustmentBehavior)
+      val preserveCameraOnPaddingChange = pigeonVar_list[17] as Boolean
+      return MapOptionsDto(cameraPosition, mapType, compassEnabled, rotateGesturesEnabled, scrollGesturesEnabled, tiltGesturesEnabled, zoomGesturesEnabled, scrollGesturesEnabledDuringRotateOrZoom, mapToolbarEnabled, minZoomPreference, maxZoomPreference, zoomControlsEnabled, cameraTargetBounds, padding, mapId, mapColorScheme, paddingAdjustmentBehavior, preserveCameraOnPaddingChange)
     }
   }
   fun toList(): List<Any?> {
@@ -763,6 +766,7 @@ data class MapOptionsDto (
       mapId,
       mapColorScheme,
       paddingAdjustmentBehavior,
+      preserveCameraOnPaddingChange,
     )
   }
   override fun equals(other: Any?): Boolean {

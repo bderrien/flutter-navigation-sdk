@@ -506,6 +506,7 @@ class MapOptionsDto {
     this.mapId,
     required this.mapColorScheme,
     required this.paddingAdjustmentBehavior,
+    required this.preserveCameraOnPaddingChange,
   });
 
   /// The initial positioning of the camera in the map view.
@@ -561,6 +562,9 @@ class MapOptionsDto {
   /// iOS [GMSMapView.paddingAdjustmentBehavior] only.
   MapPaddingAdjustmentBehaviorDto paddingAdjustmentBehavior;
 
+  /// iOS only. When true, padding changes preserve the current camera position.
+  bool preserveCameraOnPaddingChange;
+
   List<Object?> _toList() {
     return <Object?>[
       cameraPosition,
@@ -580,6 +584,7 @@ class MapOptionsDto {
       mapId,
       mapColorScheme,
       paddingAdjustmentBehavior,
+      preserveCameraOnPaddingChange,
     ];
   }
 
@@ -606,6 +611,7 @@ class MapOptionsDto {
       mapId: result[14] as String?,
       mapColorScheme: result[15]! as MapColorSchemeDto,
       paddingAdjustmentBehavior: result[16]! as MapPaddingAdjustmentBehaviorDto,
+      preserveCameraOnPaddingChange: result[17]! as bool,
     );
   }
 
