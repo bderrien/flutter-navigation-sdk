@@ -1024,13 +1024,12 @@ public class GoogleMapsNavigationView: NSObject, FlutterPlatformView, ViewSettle
   }
 
   func setPadding(padding: MapPaddingDto) throws {
-    let insets = UIEdgeInsets(
+    _mapView.padding = UIEdgeInsets(
       top: CGFloat(padding.top),
       left: CGFloat(padding.left),
       bottom: CGFloat(padding.bottom),
       right: CGFloat(padding.right)
     )
-    _mapView.applyPaddingPreservingCamera(insets)
   }
 
   func getPadding() throws -> MapPaddingDto {
