@@ -59,7 +59,8 @@ extension Convert {
       ),
       mapId: mapOptions.mapId,
       mapColorScheme: convertMapColorScheme(mapColorScheme: mapOptions.mapColorScheme),
-      paddingAdjustmentBehavior: mapOptions.paddingAdjustmentBehavior == .always ? .always : .never
+      paddingAdjustmentBehavior: mapOptions.paddingAdjustmentBehavior == .always ? .always : .never,
+      preserveCameraOnPaddingChange: mapOptions.preserveCameraOnPaddingChange
     )
   }
 }

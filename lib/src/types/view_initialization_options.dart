@@ -67,6 +67,7 @@ class MapViewInitializationOptions {
     this.navigationViewOptions,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.paddingAdjustmentBehavior = MapPaddingAdjustmentBehavior.never,
+    this.preserveCameraOnPaddingChange = false,
   });
 
   /// The initial map options for the map view.
@@ -88,6 +89,13 @@ class MapViewInitializationOptions {
   /// iOS [GMSMapView.paddingAdjustmentBehavior] only; ignored on Android.
   final MapPaddingAdjustmentBehavior paddingAdjustmentBehavior;
 
+  /// iOS only; ignored on Android.
+  ///
+  /// When true, changing map padding preserves the current camera position
+  /// (similar to Android behavior). When false, iOS recenters the map in the
+  /// padded region.
+  final bool preserveCameraOnPaddingChange;
+
   @override
   String toString() =>
       'MapViewInitializationOptions('
@@ -95,7 +103,8 @@ class MapViewInitializationOptions {
       'mapOptions: $mapOptions, '
       'navigationViewOptions: $navigationViewOptions, '
       'gestureRecognizers: $gestureRecognizers, '
-      'paddingAdjustmentBehavior: $paddingAdjustmentBehavior'
+      'paddingAdjustmentBehavior: $paddingAdjustmentBehavior, '
+      'preserveCameraOnPaddingChange: $preserveCameraOnPaddingChange'
       ')';
 }
 

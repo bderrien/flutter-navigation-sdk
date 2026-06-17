@@ -86,6 +86,7 @@ class MapOptionsDto {
     required this.mapId,
     required this.mapColorScheme,
     required this.paddingAdjustmentBehavior,
+    required this.preserveCameraOnPaddingChange,
   });
 
   /// The initial positioning of the camera in the map view.
@@ -140,6 +141,9 @@ class MapOptionsDto {
 
   /// iOS [GMSMapView.paddingAdjustmentBehavior] only.
   final MapPaddingAdjustmentBehaviorDto paddingAdjustmentBehavior;
+
+  /// iOS only. When true, padding changes preserve the current camera position.
+  final bool preserveCameraOnPaddingChange;
 }
 
 /// Determines the initial visibility of the navigation UI on map initialization.
