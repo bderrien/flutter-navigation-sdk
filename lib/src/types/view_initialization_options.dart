@@ -17,6 +17,26 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
 
 import '../../google_navigation_flutter.dart';
+import '../method_channel/messages.g.dart';
+
+/// iOS [GMSMapView.paddingAdjustmentBehavior] only.
+/// {@category Navigation View}
+/// {@category Map View}
+enum MapPaddingAdjustmentBehavior { never, always }
+
+/// [MapPaddingAdjustmentBehavior] convert extension.
+/// @nodoc
+extension ConvertMapPaddingAdjustmentBehavior on MapPaddingAdjustmentBehavior {
+  /// Converts [MapPaddingAdjustmentBehavior] to [MapPaddingAdjustmentBehaviorDto].
+  MapPaddingAdjustmentBehaviorDto toDto() {
+    switch (this) {
+      case MapPaddingAdjustmentBehavior.never:
+        return MapPaddingAdjustmentBehaviorDto.never;
+      case MapPaddingAdjustmentBehavior.always:
+        return MapPaddingAdjustmentBehaviorDto.always;
+    }
+  }
+}
 
 /// Encapsulates the initial configuration required to initialize the navigation map view.
 ///
@@ -46,6 +66,8 @@ class MapViewInitializationOptions {
     required this.mapOptions,
     this.navigationViewOptions,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
+    this.paddingAdjustmentBehavior = MapPaddingAdjustmentBehavior.never,
+    this.preserveCameraOnPaddingChange = false,
   });
 
   /// The initial map options for the map view.
@@ -64,13 +86,25 @@ class MapViewInitializationOptions {
   /// it's an empty set, implying no gestures will be forwarded.
   final Set<Factory<OneSequenceGestureRecognizer>> gestureRecognizers;
 
+  /// iOS [GMSMapView.paddingAdjustmentBehavior] only; ignored on Android.
+  final MapPaddingAdjustmentBehavior paddingAdjustmentBehavior;
+
+  /// iOS only; ignored on Android.
+  ///
+  /// When true, changing map padding preserves the current camera position
+  /// (similar to Android behavior). When false, iOS recenters the map in the
+  /// padded region.
+  final bool preserveCameraOnPaddingChange;
+
   @override
   String toString() =>
       'MapViewInitializationOptions('
       'layoutDirection: $layoutDirection, '
       'mapOptions: $mapOptions, '
       'navigationViewOptions: $navigationViewOptions, '
-      'gestureRecognizers: $gestureRecognizers'
+      'gestureRecognizers: $gestureRecognizers, '
+      'paddingAdjustmentBehavior: $paddingAdjustmentBehavior, '
+      'preserveCameraOnPaddingChange: $preserveCameraOnPaddingChange'
       ')';
 }
 
@@ -89,8 +123,6 @@ class MapViewInitializationOptions {
 ///   // ... other parameters
 /// );
 /// ```
-/// {@category Navigation View}
-/// {@category Map View}
 @immutable
 class MapOptions {
   /// Creates a new instance of [MapOptions] with the given initial

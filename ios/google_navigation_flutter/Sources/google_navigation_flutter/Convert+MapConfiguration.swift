@@ -58,7 +58,9 @@ extension Convert {
         right: CGFloat(mapOptions.padding?.right ?? 0)
       ),
       mapId: mapOptions.mapId,
-      mapColorScheme: convertMapColorScheme(mapColorScheme: mapOptions.mapColorScheme)
+      mapColorScheme: convertMapColorScheme(mapColorScheme: mapOptions.mapColorScheme),
+      paddingAdjustmentBehavior: mapOptions.paddingAdjustmentBehavior == .always ? .always : .never,
+      preserveCameraOnPaddingChange: mapOptions.preserveCameraOnPaddingChange
     )
   }
 }

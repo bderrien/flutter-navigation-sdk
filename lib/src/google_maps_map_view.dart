@@ -46,6 +46,9 @@ abstract class GoogleMapsBaseMapView extends StatefulWidget {
     this.initialPadding,
     this.mapId,
     this.initialMapColorScheme = MapColorScheme.followSystem,
+    this.initialPaddingAdjustmentBehavior =
+        MapPaddingAdjustmentBehavior.never,
+    this.initialPreserveCameraOnPaddingChange = false,
     this.layoutDirection,
     this.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     this.onRecenterButtonClicked,
@@ -179,6 +182,12 @@ abstract class GoogleMapsBaseMapView extends StatefulWidget {
   /// Defaults to [MapColorScheme.followSystem].
   final MapColorScheme initialMapColorScheme;
 
+  /// iOS [GMSMapView.paddingAdjustmentBehavior] only; ignored on Android.
+  final MapPaddingAdjustmentBehavior initialPaddingAdjustmentBehavior;
+
+  /// iOS only; ignored on Android. See [MapViewInitializationOptions.preserveCameraOnPaddingChange].
+  final bool initialPreserveCameraOnPaddingChange;
+
   /// Which gestures should be forwarded to the PlatformView.
   ///
   /// When this set is empty, the map will only handle pointer events for gestures that
@@ -296,6 +305,8 @@ class GoogleMapsMapView extends GoogleMapsBaseMapView {
     super.initialPadding,
     super.mapId,
     super.initialMapColorScheme = MapColorScheme.followSystem,
+    super.initialPaddingAdjustmentBehavior = MapPaddingAdjustmentBehavior.never,
+    super.initialPreserveCameraOnPaddingChange = false,
     super.layoutDirection,
     super.gestureRecognizers = const <Factory<OneSequenceGestureRecognizer>>{},
     super.onRecenterButtonClicked,
@@ -500,6 +511,9 @@ class GoogleMapsMapViewState extends MapViewState<GoogleMapsMapView> {
             Directionality.maybeOf(context) ??
             TextDirection.ltr,
         gestureRecognizers: widget.gestureRecognizers,
+        paddingAdjustmentBehavior: widget.initialPaddingAdjustmentBehavior,
+        preserveCameraOnPaddingChange:
+            widget.initialPreserveCameraOnPaddingChange,
         mapOptions: MapOptions(
           cameraPosition: widget.initialCameraPosition,
           mapType: widget.initialMapType,

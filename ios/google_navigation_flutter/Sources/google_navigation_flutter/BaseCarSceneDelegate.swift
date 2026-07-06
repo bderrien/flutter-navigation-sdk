@@ -63,7 +63,7 @@ open class BaseCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate
     navView
   }
 
-  public func templateApplicationScene(
+  open func templateApplicationScene(
     _ templateApplicationScene: CPTemplateApplicationScene,
     didConnect interfaceController: CPInterfaceController,
     to window: CPWindow
@@ -321,6 +321,18 @@ open class BaseCarSceneDelegate: UIResponder, CPTemplateApplicationSceneDelegate
 
   func sendAutoScreenAvailabilityChangedEvent(isAvailable: Bool) {
     autoViewEventApi?.onAutoScreenAvailabilityChanged(isAvailable: isAvailable) { _ in }
+  }
+
+  @objc open func mapTemplate(
+    _ mapTemplate: CPMapTemplate,
+    displayStyleFor maneuver: CPManeuver
+  ) -> CPManeuverDisplayStyle {
+    return []
+  }
+
+  @available(iOS 17.4, *)
+  @objc open func mapTemplateShouldProvideNavigationMetadata(_ mapTemplate: CPMapTemplate) -> Bool {
+    return false
   }
 
   func sendIndoorFocusedBuildingChangedEvent(building: IndoorBuildingDto?) {
