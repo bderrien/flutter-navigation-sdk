@@ -43,6 +43,15 @@ extension GMSPolyline {
     if let zIndex = pigeonPolyline.options.zIndex {
       self.zIndex = Int32(zIndex)
     }
+    if let pattern = PolylineStrokePatternTexture.makeResult(
+      pattern: pigeonPolyline.options.strokePattern?.compactMap { $0 } ?? [],
+      color: strokeColor,
+      lineWidth: strokeWidth
+    ) {
+      strokeWidth = pattern.strokeWidth
+      spans = [pattern.span]
+      return
+    }
     spans = pigeonPolyline.options
       .spans
       .map {
