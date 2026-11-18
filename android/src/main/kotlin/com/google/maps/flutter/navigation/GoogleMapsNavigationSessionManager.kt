@@ -867,10 +867,6 @@ constructor(
             ) {}
           }
 
-          override fun onGpsAvailabilityUpdate(isGpsAvailable: Boolean) {
-            navigationSessionEventApi.onGpsAvailabilityUpdate(isGpsAvailable) {}
-          }
-
           override fun onGpsAvailabilityChange(event: GpsAvailabilityChangeEvent?) {
             if (event != null) {
               navigationSessionEventApi.onGpsAvailabilityChange(

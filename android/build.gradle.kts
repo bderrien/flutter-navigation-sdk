@@ -24,7 +24,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.7.3")
+        classpath("com.android.tools.build:gradle:9.0.1")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         // ktfmt (Kotlin formatter) is a development/CI-only tool. Pulling it onto the classpath
         // (and applying it below) is gated behind -Pktfmt so it is never forced on apps that
@@ -59,7 +59,8 @@ allprojects {
 // conditional preserves compatibility for apps still on AGP 8.
 // https://docs.flutter.dev/release/breaking-changes/migrate-to-built-in-kotlin/for-plugin-authors#supporting-flutter-versions-earlier-than-3-44
 val agpMajor = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.substringBefore('.').toInt()
-if (agpMajor < 9) {
+// An app on AGP 9 may still opt out of built-in Kotlin (android.builtInKotlin=false), which Flutter < 3.44 needs.
+if (agpMajor < 9 || providers.gradleProperty("android.builtInKotlin").orNull == "false") {
     apply(plugin = "org.jetbrains.kotlin.android")
 }
 
@@ -75,7 +76,7 @@ if (providers.gradleProperty("ktfmt").isPresent) {
 android {
     namespace = "com.google.maps.flutter.navigation"
 
-    compileSdk = 35
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -124,7 +125,7 @@ dependencies {
     implementation("androidx.car.app:app:1.7.0")
     implementation("androidx.car.app:app-projected:1.7.0")
     implementation("androidx.startup:startup-runtime:1.2.0")
-    implementation("com.google.android.libraries.navigation:navigation:7.7.0")
+    implementation("com.google.android.libraries.navigation:navigation:8.1.0")
     testImplementation("org.jetbrains.kotlin:kotlin-test")
     testImplementation("io.mockk:mockk:1.13.8")
     testImplementation("junit:junit:4.13.2")
